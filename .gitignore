@@ -1,0 +1,6 @@
+api/target/
+.vscode/
+.settings
+web/node_modules/
+**/.classpath
+**/.project
