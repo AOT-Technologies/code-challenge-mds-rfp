@@ -1,0 +1,3 @@
+type ApplicationDataProps = {
+  exitApplicationCommentModal: () => void;
+};
