@@ -8,3 +8,8 @@ export const saveComment = async (
   let res = await axios.post(endPoint, JSON.stringify(payload));
   return res.data;
 };
+
+export const listComments = async (): Promise<CommentModel[]> => {
+  let res = await axios.get(endPoint);
+  return res.data;
+};

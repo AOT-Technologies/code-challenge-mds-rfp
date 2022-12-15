@@ -1,5 +1,5 @@
 export interface CommentModel {
-  id: number;
+  id?: number;
   applicationId: number;
   description: string;
   author: string;

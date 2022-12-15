@@ -9,6 +9,7 @@ import { InputText } from "primereact/inputtext";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Dialog } from "primereact/dialog";
 import { ApplicationCommentModal } from "../../modals/application-comment-modal/application-comment-modal";
+import { listComments } from "../../../../services/commentService";
 
 export const ApplicationDetail: React.FC = () => {
   const dt = React.useRef<any | null>(null);
@@ -25,16 +26,16 @@ export const ApplicationDetail: React.FC = () => {
   const [showHideAddComment, setShowHideAddComment] = useState(false);
 
   useEffect(() => {
-    //listAllUsers();
+    listAllComments();
   }, [comments]);
 
   useEffect(() => {
     initFilters();
   }, []);
 
-  // call to service to get all users
+  // call to service to get all comments
   const listAllComments = async () => {
-    //setComments(await listUsers());
+    setComments(await listComments());
   };
 
   const onGlobalFilterChange = (e: any) => {
