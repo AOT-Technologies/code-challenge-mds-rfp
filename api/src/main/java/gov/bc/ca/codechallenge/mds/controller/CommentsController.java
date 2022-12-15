@@ -61,11 +61,10 @@ public class CommentsController {
 			return new ResourceNotFoundException("Application not found for this id :: " + commentId);
 		});
 
-		comment.setStatus(commentReq.getStatus());               ;
+		comment.setStatus(commentReq.getStatus());
 		final Comment updatedComment = commentRepository.save(comment);
 		
 		logger.info("Comment status updated for commentId: " + commentId);
 		return updatedComment;
-		
 	}
 }
