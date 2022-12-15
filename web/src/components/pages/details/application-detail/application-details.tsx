@@ -7,6 +7,8 @@ import { CommentModel } from "../../../models/commentModel";
 import React from "react";
 import { InputText } from "primereact/inputtext";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
+import { Dialog } from "primereact/dialog";
+import { ApplicationCommentModal } from "../../modals/application-comment-modal/application-comment-modal";
 
 export const ApplicationDetail: React.FC = () => {
   const dt = React.useRef<any | null>(null);
@@ -20,9 +22,10 @@ export const ApplicationDetail: React.FC = () => {
   const [commentSelected, setCommentSelected] = useState<
     CommentModel | undefined
   >(undefined);
+  const [showHideAddComment, setShowHideAddComment] = useState(false);
 
   useEffect(() => {
-    listAllUsers();
+    //listAllUsers();
   }, [comments]);
 
   useEffect(() => {
@@ -30,8 +33,58 @@ export const ApplicationDetail: React.FC = () => {
   }, []);
 
   // call to service to get all users
-  const listAllUsers = async () => {
-    setUsers(await listUsers());
+  const listAllComments = async () => {
+    //setComments(await listUsers());
+  };
+
+  const onGlobalFilterChange = (e: any) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+    _filters["global"].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+
+  const initFilters = () => {
+    setFilters({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+      description: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      author: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      status: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+    });
+    setGlobalFilterValue("");
+  };
+
+  // Clear filter
+  const clearFilter = () => {
+    initFilters();
+  };
+
+  const exportCSV = (selectionOnly: any) => {
+    dt.current.exportCSV({ selectionOnly });
+  };
+
+  const viewActionBodyTemplate = (rowSelected: CommentModel) => {
+    return (
+      <React.Fragment>
+        <Button
+          className="main-button"
+          label="View history"
+          icon="pi pi-eye"
+          onClick={() => navigate(`/application/${rowSelected.id}`)}
+        />
+      </React.Fragment>
+    );
   };
 
   const renderFilterHeader = () => {
@@ -67,54 +120,9 @@ export const ApplicationDetail: React.FC = () => {
   };
   const filterHeader = renderFilterHeader();
 
-  const initFilters = () => {
-    setFilters({
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      description: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      author: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      status: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-    });
-    setGlobalFilterValue("");
-  };
-
-  // Clear filter
-  const clearFilter = () => {
-    initFilters();
-  };
-
-  const onGlobalFilterChange = (e: any) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
-    _filters["global"].value = value;
-
-    setFilters(_filters);
-    setGlobalFilterValue(value);
-  };
-
-  const exportCSV = (selectionOnly: any) => {
-    dt.current.exportCSV({ selectionOnly });
-  };
-
-  const viewActionBodyTemplate = (rowSelected: CommentModel) => {
-    return (
-      <React.Fragment>
-        <Button
-          className="main-button"
-          label="View history"
-          icon="pi pi-eye"
-          onClick={() => navigate(`/application/${rowSelected.id}`)}
-        />
-      </React.Fragment>
-    );
+  const handleAddComment = () => {
+    //setUserSelected(event);
+    //setShowHideUpdateUser(true);
   };
 
   return (
@@ -129,6 +137,16 @@ export const ApplicationDetail: React.FC = () => {
           onClick={() => navigate("/")}
           data-pr-tooltip="Back"
         />
+
+        <Button
+          className="main-button"
+          style={{ marginLeft: 8, marginTop: 8 }}
+          type="button"
+          icon="pi pi-arrow-left"
+          label="Add Comment"
+          onClick={() => setShowHideAddComment(true)}
+          data-pr-tooltip="Add comment"
+        />
         {/* <div className="block font-bold text-center">First name</div>
     <div className="block text-center">{userDetails?.firstName}</div>
     <br />
@@ -142,6 +160,17 @@ export const ApplicationDetail: React.FC = () => {
     <div className="block text-center">
       {String(userDetails?.dateOfBirth)}
     </div> */}
+        <Dialog
+          header="Add Comment"
+          visible={showHideAddComment}
+          style={{ width: "30vw" }}
+          onHide={() => setShowHideAddComment(false)}
+        >
+          <ApplicationCommentModal
+            exitApplicationModal={handleAddComment}
+            data={Number(params.id)}
+          />
+        </Dialog>
         <DataTable
           ref={dt}
           style={{ marginTop: 60 }}
