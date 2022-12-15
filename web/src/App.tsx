@@ -9,6 +9,7 @@ import { setHttpInterceptor } from "./interceptors/httpInterceptor";
 import Header from "./components/header/header";
 
 import ApplicationList from "./components/pages/lists/application-list/application-list";
+import { ApplicationDetail } from "./components/pages/details/application-detail/application-details";
 
 function App() {
   setHttpInterceptor();
@@ -17,6 +18,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<ApplicationList />} />
+        <Route path="application/:id" element={<ApplicationDetail />} />
       </Routes>
     </Router>
   );

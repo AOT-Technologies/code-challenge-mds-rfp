@@ -31,7 +31,10 @@ public class CommentsController {
 	
 	@GetMapping("/comment")
 	public List<Comment> getAllComments() {
-		return null;
+		logger.info("Returning all the comments");
+		List<Comment> comments = commentRepository.findAll();
+
+		return comments;
 	}
 	
 	@GetMapping("/comment/{id}")

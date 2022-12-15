@@ -142,7 +142,7 @@ const ApplicationList = () => {
               ]}
               filters={filters}
               header={filterHeader}
-              emptyMessage="No users found."
+              emptyMessage="No applications found."
             >
               <Column field="date" header="Date" sortable></Column>
               <Column
