@@ -20,10 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import gov.bc.ca.codechallenge.mds.exception.ResourceNotFoundException;
 import gov.bc.ca.codechallenge.mds.model.Comment;
 import gov.bc.ca.codechallenge.mds.repository.CommentRepository;
+import io.swagger.annotations.Api;
 
 
 @RestController
 @RequestMapping("/api/v1")
+@Api(value = "Comments", tags = "comments", description = "Everything related to comments.")
 public class CommentsController {
 
 	private static final Logger logger = LoggerFactory.getLogger(CommentsController.class);

@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gov.bc.ca.codechallenge.mds.model.HistoryItem;
 import gov.bc.ca.codechallenge.mds.repository.HistoryItemRepository;
+import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping("/api/v1")
+@Api(value = "Applications", tags = "applications", description = "Everything related to applications.")
 public class HistoryItemController {
 
 	private static final Logger logger = LoggerFactory.getLogger(HistoryItemController.class);
