@@ -38,15 +38,14 @@ public class HistoryItemControllerTest {
 		HistoryItem historyItem = new HistoryItem();
 		historyItem.setAuthor("Steve Job");
 		historyItem.setType("Response");
-		List allHistoryItems = singletonList(historyItem);
+		List<HistoryItem> allHistoryItems = singletonList(historyItem);
 
 		given(historyItemController.getAllHistoryItem())
 				.willReturn(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(allHistoryItems));
 
 		mvc.perform(get("/api/v1/history-item").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.[0].author", is("Steve Job")))
-				.andExpect(jsonPath("$.[0].type", is("Response")));
+				.andExpect(jsonPath("$.[0].author", is("Steve Job"))).andExpect(jsonPath("$.[0].type", is("Response")));
 
 	}
 
