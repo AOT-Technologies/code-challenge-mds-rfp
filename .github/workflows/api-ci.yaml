@@ -1,0 +1,94 @@
+name: api CI
+
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "api/**"
+    types: [closed]
+
+#  push:
+#    branches:
+#      - github-actions-testing
+#    paths:
+#      - "api/**"
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./api
+
+jobs:
+
+  code-build-test-deploy:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cardinalby/export-env-action@v2
+        with:
+          envFile: './env/constants.env'
+          expand: 'true'
+
+      - name: Start PostgreSQL on Ubuntu
+        run: |
+          sudo systemctl start postgresql.service
+          pg_isready
+
+      - name: Change user password
+        run: |
+          sudo -u postgres psql --command="ALTER USER ${{ env.DB_USERNAME }}  PASSWORD '${{ env.DB_PASSWORD }}'" --command="\du"
+
+      - name: Create additional database
+        run: |
+          sudo -u postgres createdb ${{ env.DB_DATABASE }}  --owner=${{ env.DB_USERNAME }} 
+          PGPASSWORD=${{ env.DB_PASSWORD }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots package
+
+      - name: Move target to dist
+        run: | 
+          mkdir -p dist
+          cp target/*.jar dist
+          ls -l dist/*
+
+      - name: Add dist
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git status
+          git add dist/
+          git status
+
+      - name: Commit dist
+        run: |
+          git commit -m "auto-commit of code build to dist after testing"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+#          branch: ${{ github.head_ref || github.ref_name }}
+          branch: ${{ github.event.pull_request.base.ref || github.ref_name }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
+  docker-build-check:
+    runs-on: ubuntu-20.04
+    name: Build dockerfile to ensure it works
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: docker build to check strictness
+        id: docker-build
+        run: |
+          docker build .
