@@ -121,9 +121,9 @@ export const ApplicationDetail: React.FC = () => {
   };
   const filterHeader = renderFilterHeader();
 
-  const handleAddComment = () => {
-    //setUserSelected(event);
-    //setShowHideUpdateUser(true);
+  const handleAddComment = async () => {
+    setShowHideAddComment(false);
+    await listAllComments();
   };
 
   return (
@@ -141,26 +141,28 @@ export const ApplicationDetail: React.FC = () => {
 
         <Button
           className="main-button"
-          style={{ marginLeft: 8, marginTop: 8 }}
+          style={{
+            marginLeft: 8,
+            marginTop: 8,
+            position: "absolute",
+            right: 20,
+          }}
           type="button"
-          icon="pi pi-arrow-left"
+          icon="pi pi-plus-circle"
           label="Add Comment"
           onClick={() => setShowHideAddComment(true)}
           data-pr-tooltip="Add comment"
         />
-        {/* <div className="block font-bold text-center">First name</div>
-    <div className="block text-center">{userDetails?.firstName}</div>
-    <br />
-    <div className="block font-bold text-center">Middle name</div>
-    <div className="block text-center">{userDetails?.middleName}</div>
-    <br />
-    <div className="block font-bold text-center">Last name</div>
-    <div className="block text-center">{userDetails?.lastName}</div>
-    <br />
-    <div className="block font-bold text-center">Date of birth</div>
-    <div className="block text-center">
-      {String(userDetails?.dateOfBirth)}
-    </div> */}
+        <div className="block font-bold text-center">Organization</div>
+        <div className="block text-center">{"Line Creek Operations"}</div>
+        <br />
+        <div className="block font-bold text-center">Application</div>
+        <div className="block text-center">{"Line Creek Operations"}</div>
+        <br />
+        <div className="block font-bold text-center">Status</div>
+        <div className="block text-center">{"Review"}</div>
+        <br />
+
         <Dialog
           header="Add Comment"
           visible={showHideAddComment}
@@ -185,7 +187,6 @@ export const ApplicationDetail: React.FC = () => {
           <Column field="createdDateTime" header="Date" sortable></Column>
           <Column field="description" header="Description" sortable></Column>
           <Column field="author" header="Author" sortable></Column>
-          <Column field="status" header="Status" sortable></Column>
           <Column field="status" header="Status" sortable></Column>
           <Column
             body={viewActionBodyTemplate}
