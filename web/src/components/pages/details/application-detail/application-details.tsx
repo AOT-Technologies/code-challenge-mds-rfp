@@ -11,6 +11,8 @@ import { Dialog } from "primereact/dialog";
 import { ApplicationCommentModal } from "../../modals/application-comment-modal/application-comment-modal";
 import { listComments } from "../../../../services/commentService";
 import { ApplicationHistoryModal } from "../../modals/application-history-modal/application-history-modal";
+import { ApplicationModel } from "../../../models/applicationModel";
+import { getApplication } from "../../../../services/applicationService";
 
 export const ApplicationDetail: React.FC = () => {
   const dt = React.useRef<any | null>(null);
@@ -24,10 +26,13 @@ export const ApplicationDetail: React.FC = () => {
   const [commentIdSelected, setCommentIdSelected] = useState<number>(0);
   const [showHideAddComment, setShowHideAddComment] = useState(false);
   const [showHideAddHistoryItem, setShowHideHistoryItem] = useState(false);
+  const [applicationSelected, setApplicationSelected] = useState<
+    ApplicationModel | undefined
+  >(undefined);
 
   useEffect(() => {
     listAllComments();
-  }, []);
+  }, [comments]);
 
   useEffect(() => {
     initFilters();
@@ -36,6 +41,7 @@ export const ApplicationDetail: React.FC = () => {
   // call to service to get all comments
   const listAllComments = async () => {
     setComments(await listComments(Number(params.id)));
+    setApplicationSelected(getApplication(Number(params.id)));
   };
 
   const onGlobalFilterChange = (e: any) => {
@@ -159,13 +165,17 @@ export const ApplicationDetail: React.FC = () => {
           data-pr-tooltip="Add comment"
         />
         <div className="block font-bold text-center">Organization</div>
-        <div className="block text-center">{"ELMI"}</div>
+        <div className="block text-center">
+          {applicationSelected?.organization}
+        </div>
         <br />
         <div className="block font-bold text-center">Application</div>
-        <div className="block text-center">{"Line Creek Operations"}</div>
+        <div className="block text-center">
+          {applicationSelected?.application}
+        </div>
         <br />
         <div className="block font-bold text-center">Status</div>
-        <div className="block text-center">{"Review"}</div>
+        <div className="block text-center">{applicationSelected?.status}</div>
         <br />
 
         <Dialog
