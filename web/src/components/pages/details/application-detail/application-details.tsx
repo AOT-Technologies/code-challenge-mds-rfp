@@ -10,6 +10,9 @@ import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Dialog } from "primereact/dialog";
 import { ApplicationCommentModal } from "../../modals/application-comment-modal/application-comment-modal";
 import { listComments } from "../../../../services/commentService";
+import { ApplicationHistoryModal } from "../../modals/application-history-modal/application-history-modal";
+import { ApplicationModel } from "../../../models/applicationModel";
+import { getApplication } from "../../../../services/applicationService";
 
 export const ApplicationDetail: React.FC = () => {
   const dt = React.useRef<any | null>(null);
@@ -20,14 +23,16 @@ export const ApplicationDetail: React.FC = () => {
   const [filters, setFilters] = useState<any | null>(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   let navigate = useNavigate();
-  const [commentSelected, setCommentSelected] = useState<
-    CommentModel | undefined
-  >(undefined);
+  const [commentIdSelected, setCommentIdSelected] = useState<number>(0);
   const [showHideAddComment, setShowHideAddComment] = useState(false);
+  const [showHideAddHistoryItem, setShowHideHistoryItem] = useState(false);
+  const [applicationSelected, setApplicationSelected] = useState<
+    ApplicationModel | undefined
+  >(undefined);
 
   useEffect(() => {
     listAllComments();
-  }, [comments]);
+  });
 
   useEffect(() => {
     initFilters();
@@ -35,7 +40,8 @@ export const ApplicationDetail: React.FC = () => {
 
   // call to service to get all comments
   const listAllComments = async () => {
-    setComments(await listComments());
+    setComments(await listComments(Number(params.id)));
+    setApplicationSelected(getApplication(Number(params.id)));
   };
 
   const onGlobalFilterChange = (e: any) => {
@@ -75,6 +81,11 @@ export const ApplicationDetail: React.FC = () => {
     dt.current.exportCSV({ selectionOnly });
   };
 
+  const handleCommentSelected = (event: number) => {
+    setCommentIdSelected(event);
+    setShowHideHistoryItem(true);
+  };
+
   const viewActionBodyTemplate = (rowSelected: CommentModel) => {
     return (
       <React.Fragment>
@@ -82,7 +93,7 @@ export const ApplicationDetail: React.FC = () => {
           className="main-button"
           label="View history"
           icon="pi pi-eye"
-          onClick={() => navigate(`/application/${rowSelected.id}`)}
+          onClick={() => handleCommentSelected(rowSelected?.id || 0)}
         />
       </React.Fragment>
     );
@@ -121,9 +132,9 @@ export const ApplicationDetail: React.FC = () => {
   };
   const filterHeader = renderFilterHeader();
 
-  const handleAddComment = () => {
-    //setUserSelected(event);
-    //setShowHideUpdateUser(true);
+  const handleAddComment = async () => {
+    setShowHideAddComment(false);
+    await listAllComments();
   };
 
   return (
@@ -141,26 +152,32 @@ export const ApplicationDetail: React.FC = () => {
 
         <Button
           className="main-button"
-          style={{ marginLeft: 8, marginTop: 8 }}
+          style={{
+            marginLeft: 8,
+            marginTop: 8,
+            position: "absolute",
+            right: 20,
+          }}
           type="button"
-          icon="pi pi-arrow-left"
+          icon="pi pi-plus-circle"
           label="Add Comment"
           onClick={() => setShowHideAddComment(true)}
           data-pr-tooltip="Add comment"
         />
-        {/* <div className="block font-bold text-center">First name</div>
-    <div className="block text-center">{userDetails?.firstName}</div>
-    <br />
-    <div className="block font-bold text-center">Middle name</div>
-    <div className="block text-center">{userDetails?.middleName}</div>
-    <br />
-    <div className="block font-bold text-center">Last name</div>
-    <div className="block text-center">{userDetails?.lastName}</div>
-    <br />
-    <div className="block font-bold text-center">Date of birth</div>
-    <div className="block text-center">
-      {String(userDetails?.dateOfBirth)}
-    </div> */}
+        <div className="block font-bold text-center">Organization</div>
+        <div className="block text-center">
+          {applicationSelected?.organization}
+        </div>
+        <br />
+        <div className="block font-bold text-center">Application</div>
+        <div className="block text-center">
+          {applicationSelected?.application}
+        </div>
+        <br />
+        <div className="block font-bold text-center">Status</div>
+        <div className="block text-center">{applicationSelected?.status}</div>
+        <br />
+
         <Dialog
           header="Add Comment"
           visible={showHideAddComment}
@@ -170,6 +187,18 @@ export const ApplicationDetail: React.FC = () => {
           <ApplicationCommentModal
             exitApplicationModal={handleAddComment}
             data={Number(params.id)}
+          />
+        </Dialog>
+
+        <Dialog
+          header="View Comment History"
+          visible={showHideAddHistoryItem}
+          style={{ width: "30vw" }}
+          onHide={() => setShowHideHistoryItem(false)}
+        >
+          <ApplicationHistoryModal
+            exitApplicationModal={handleAddComment}
+            commentId={commentIdSelected}
           />
         </Dialog>
         <DataTable
@@ -185,7 +214,6 @@ export const ApplicationDetail: React.FC = () => {
           <Column field="createdDateTime" header="Date" sortable></Column>
           <Column field="description" header="Description" sortable></Column>
           <Column field="author" header="Author" sortable></Column>
-          <Column field="status" header="Status" sortable></Column>
           <Column field="status" header="Status" sortable></Column>
           <Column
             body={viewActionBodyTemplate}

@@ -1,5 +1,5 @@
 export interface HistoryItemModel {
-  id: number;
+  id?: number;
   commentId: number;
   text: string;
   type: string;
