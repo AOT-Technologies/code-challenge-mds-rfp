@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import gov.bc.ca.codechallenge.mds.exception.ResourceNotFoundException;
 import gov.bc.ca.codechallenge.mds.model.Comment;
 import gov.bc.ca.codechallenge.mds.repository.CommentRepository;
 
@@ -39,7 +40,7 @@ public class CommentsController {
 	}
 	
 	@PostMapping("/comment")
-	public Comment createApplication(@Valid @RequestBody Comment comment) {
+	public Comment createComment(@Valid @RequestBody Comment comment) {
 		
 		logger.debug("Creating new comment >> "+comment);
 		Comment createdComment = null;
@@ -52,9 +53,19 @@ public class CommentsController {
 	}
 	
 	@PutMapping("/comment/{id}")
-	public Comment updateApplication(@PathVariable(value = "id") Long commentId,
-			@Valid @RequestBody Comment comment)  {
-		return null;
+	public Comment updateCommentStatus(@PathVariable(value = "id") Long commentId,
+			@Valid @RequestBody Comment commentReq) throws ResourceNotFoundException  {
+		logger.debug("Querying db for commentId: " + commentId);
+		Comment comment = commentRepository.findById(commentId).orElseThrow(() -> {
+			logger.error("Comment not found for commentId: " + commentId);
+			return new ResourceNotFoundException("Application not found for this id :: " + commentId);
+		});
+
+		comment.setStatus(commentReq.getStatus());               ;
+		final Comment updatedComment = commentRepository.save(comment);
+		
+		logger.info("Comment status updated for commentId: " + commentId);
+		return updatedComment;
 		
 	}
 }
