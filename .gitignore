@@ -4,3 +4,4 @@ api/target/
 web/node_modules/
 **/.classpath
 **/.project
+api/bin
