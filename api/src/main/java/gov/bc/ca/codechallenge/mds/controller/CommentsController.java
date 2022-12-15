@@ -35,8 +35,16 @@ public class CommentsController {
 	}
 	
 	@GetMapping("/comment/{id}")
-	public Comment getCommentById(@PathVariable(value = "id") Long commentId){
-		return null;
+	public Comment getCommentById(@PathVariable(value = "id") Long commentId)throws ResourceNotFoundException {
+		logger.debug("Querying db for commentId: " + commentId);
+		Comment comment = commentRepository.findById(commentId).orElseThrow(() -> {
+			logger.error("Comment not found for commentId: " + commentId);
+			return new ResourceNotFoundException("Comment not found for this id :: " + commentId);
+		});
+
+		logger.info("Returning Application for commentId: " + commentId);
+		
+		return comment;
 	}
 	
 	@PostMapping("/comment")
