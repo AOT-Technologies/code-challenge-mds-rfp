@@ -10,6 +10,7 @@ import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Dialog } from "primereact/dialog";
 import { ApplicationCommentModal } from "../../modals/application-comment-modal/application-comment-modal";
 import { listComments } from "../../../../services/commentService";
+import { ApplicationHistoryModal } from "../../modals/application-history-modal/application-history-modal";
 
 export const ApplicationDetail: React.FC = () => {
   const dt = React.useRef<any | null>(null);
@@ -20,14 +21,13 @@ export const ApplicationDetail: React.FC = () => {
   const [filters, setFilters] = useState<any | null>(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   let navigate = useNavigate();
-  const [commentSelected, setCommentSelected] = useState<
-    CommentModel | undefined
-  >(undefined);
+  const [commentIdSelected, setCommentIdSelected] = useState<number>(0);
   const [showHideAddComment, setShowHideAddComment] = useState(false);
+  const [showHideAddHistoryItem, setShowHideHistoryItem] = useState(false);
 
   useEffect(() => {
     listAllComments();
-  }, [comments]);
+  }, []);
 
   useEffect(() => {
     initFilters();
@@ -35,7 +35,7 @@ export const ApplicationDetail: React.FC = () => {
 
   // call to service to get all comments
   const listAllComments = async () => {
-    setComments(await listComments());
+    setComments(await listComments(Number(params.id)));
   };
 
   const onGlobalFilterChange = (e: any) => {
@@ -75,6 +75,11 @@ export const ApplicationDetail: React.FC = () => {
     dt.current.exportCSV({ selectionOnly });
   };
 
+  const handleCommentSelected = (event: number) => {
+    setCommentIdSelected(event);
+    setShowHideHistoryItem(true);
+  };
+
   const viewActionBodyTemplate = (rowSelected: CommentModel) => {
     return (
       <React.Fragment>
@@ -82,7 +87,7 @@ export const ApplicationDetail: React.FC = () => {
           className="main-button"
           label="View history"
           icon="pi pi-eye"
-          onClick={() => navigate(`/application/${rowSelected.id}`)}
+          onClick={() => handleCommentSelected(rowSelected?.id || 0)}
         />
       </React.Fragment>
     );
@@ -154,7 +159,7 @@ export const ApplicationDetail: React.FC = () => {
           data-pr-tooltip="Add comment"
         />
         <div className="block font-bold text-center">Organization</div>
-        <div className="block text-center">{"Line Creek Operations"}</div>
+        <div className="block text-center">{"ELMI"}</div>
         <br />
         <div className="block font-bold text-center">Application</div>
         <div className="block text-center">{"Line Creek Operations"}</div>
@@ -172,6 +177,18 @@ export const ApplicationDetail: React.FC = () => {
           <ApplicationCommentModal
             exitApplicationModal={handleAddComment}
             data={Number(params.id)}
+          />
+        </Dialog>
+
+        <Dialog
+          header="View Comment History"
+          visible={showHideAddHistoryItem}
+          style={{ width: "30vw" }}
+          onHide={() => setShowHideHistoryItem(false)}
+        >
+          <ApplicationHistoryModal
+            exitApplicationModal={handleAddComment}
+            commentId={commentIdSelected}
           />
         </Dialog>
         <DataTable

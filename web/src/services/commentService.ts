@@ -9,7 +9,11 @@ export const saveComment = async (
   return res.data;
 };
 
-export const listComments = async (): Promise<CommentModel[]> => {
-  let res = await axios.get(endPoint);
+export const listComments = async (
+  applicationId: number
+): Promise<CommentModel[]> => {
+  let res = await axios.get(
+    `${endPoint}/applicationId?applicationId=${applicationId}`
+  );
   return res.data;
 };

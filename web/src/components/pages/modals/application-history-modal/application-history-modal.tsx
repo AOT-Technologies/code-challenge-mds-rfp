@@ -44,15 +44,15 @@ export const ApplicationHistoryModal: React.FC<ApplicationHistoryDataProps> = ({
     payload.createdDateTime = new Date();
     payload.updatedDateTime = new Date();
     saveHistoryItem(payload);
-    await listAllComments();
+    await listAllHistoryItems();
   };
 
   useEffect(() => {
-    listAllComments();
+    listAllHistoryItems();
   }, [historyItems]);
 
   // call to service to get all history items
-  const listAllComments = async () => {
+  const listAllHistoryItems = async () => {
     setHistoryItems(await listHistoryItems(commentId));
   };
 
@@ -92,10 +92,9 @@ export const ApplicationHistoryModal: React.FC<ApplicationHistoryDataProps> = ({
         responsiveLayout="scroll"
         emptyMessage="No history items found."
       >
-        <Column field="createdDateTime" header="Date" sortable></Column>
-        <Column field="text" header="Text" sortable></Column>
-        <Column field="type" header="Type" sortable></Column>
-        <Column field="author" header="Author" sortable></Column>
+        <Column field="text" header="Text"></Column>
+        <Column field="type" header="Type"></Column>
+        <Column field="author" header="Author"></Column>
       </DataTable>
     </div>
   );
