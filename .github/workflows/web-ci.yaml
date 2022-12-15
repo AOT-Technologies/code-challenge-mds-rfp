@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - "web/**"
+    types: [closed]
 #  push:
 #    branches:
 #      - github-actions-testing
@@ -31,6 +32,7 @@ jobs:
           docker build .
   npm-build-check:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
 
 #    strategy:
 #      matrix:
@@ -46,4 +48,3 @@ jobs:
           node-version: 16.x
       - run: npm ci
       - run: npm run build --if-present
-      - run: npm test
