@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.bc.ca.codechallenge.mds.exception.ResourceNotFoundException;
@@ -48,6 +50,14 @@ public class CommentsController {
 		logger.info("Returning Application for commentId: " + commentId);
 		
 		return comment;
+	}
+	
+	@RequestMapping(value="/comment/applicationId", method = RequestMethod.GET)
+	public List<Comment> getAllCommentsByApplicationId(@RequestParam(value = "applicationId") Long applicationId)throws ResourceNotFoundException {
+		logger.info("Returning all the comments");
+		List<Comment> comments = commentRepository.findByApplicationId(applicationId);
+
+		return comments;
 	}
 	
 	@PostMapping("/comment")
