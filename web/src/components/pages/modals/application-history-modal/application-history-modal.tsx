@@ -4,7 +4,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "primereact/button";
 import { HistoryItemModel } from "../../../models/historyItemModel";
 import { InputText } from "primereact/inputtext";
-import { saveHistoryItem } from "../../../../services/historyItemService";
+import {
+  listHistoryItems,
+  saveHistoryItem,
+} from "../../../../services/historyItemService";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { useEffect, useState } from "react";
@@ -41,7 +44,7 @@ export const ApplicationHistoryModal: React.FC<ApplicationHistoryDataProps> = ({
     payload.createdDateTime = new Date();
     payload.updatedDateTime = new Date();
     saveHistoryItem(payload);
-    exitApplicationModal();
+    await listAllComments();
   };
 
   useEffect(() => {
@@ -50,7 +53,7 @@ export const ApplicationHistoryModal: React.FC<ApplicationHistoryDataProps> = ({
 
   // call to service to get all history items
   const listAllComments = async () => {
-    setHistoryItems(await listComments());
+    setHistoryItems(await listHistoryItems(commentId));
   };
 
   const handleOnExit = () => {
@@ -87,7 +90,6 @@ export const ApplicationHistoryModal: React.FC<ApplicationHistoryDataProps> = ({
         style={{ marginTop: 60 }}
         value={historyItems}
         responsiveLayout="scroll"
-        globalFilterFields={["text", "type", "author"]}
         emptyMessage="No history items found."
       >
         <Column field="createdDateTime" header="Date" sortable></Column>
