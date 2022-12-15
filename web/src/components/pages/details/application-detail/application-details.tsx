@@ -17,9 +17,22 @@ export const ApplicationDetail: React.FC = () => {
   const [filters, setFilters] = useState<any | null>(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   let navigate = useNavigate();
-  //   const [userDetails, setUserDetails] = useState<UserModel | undefined>(
-  //     undefined
-  //   );
+  const [commentSelected, setCommentSelected] = useState<
+    CommentModel | undefined
+  >(undefined);
+
+  useEffect(() => {
+    listAllUsers();
+  }, [comments]);
+
+  useEffect(() => {
+    initFilters();
+  }, []);
+
+  // call to service to get all users
+  const listAllUsers = async () => {
+    setUsers(await listUsers());
+  };
 
   const renderFilterHeader = () => {
     return (
@@ -91,7 +104,7 @@ export const ApplicationDetail: React.FC = () => {
     dt.current.exportCSV({ selectionOnly });
   };
 
-  const viewActionBodyTemplate = (rowSelected: ApplicationModel) => {
+  const viewActionBodyTemplate = (rowSelected: CommentModel) => {
     return (
       <React.Fragment>
         <Button
