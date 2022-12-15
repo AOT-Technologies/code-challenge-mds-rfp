@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import gov.bc.ca.codechallenge.mds.model.HistoryItem;
 import gov.bc.ca.codechallenge.mds.repository.HistoryItemRepository;
@@ -29,11 +31,11 @@ public class HistoryItemController {
 	private HistoryItemRepository historyItemRepository;
 
 	@GetMapping("/history-item")
-	public List<HistoryItem> getAllHistoryItem() {
+	public ResponseEntity<List<HistoryItem>> getAllHistoryItem() {
 		logger.debug("Getting all history items");
 		List<HistoryItem> resp = historyItemRepository.findAll();
 		logger.info("found " + resp.size() + " history items");
-		return resp;
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(resp);
 	}
 
 	@GetMapping("/history-item/by-comment-id/{commentId}")
