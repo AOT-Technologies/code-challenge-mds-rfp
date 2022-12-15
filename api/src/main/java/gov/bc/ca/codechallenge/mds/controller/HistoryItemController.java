@@ -8,10 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.bc.ca.codechallenge.mds.model.HistoryItem;
@@ -34,8 +34,8 @@ public class HistoryItemController {
 		return resp;
 	}
 
-	@GetMapping("/history-item/{commentId}")
-	public List<HistoryItem> getAllByCommentId(@RequestParam(value = "commentId") Long commentId) {
+	@GetMapping("/history-item/by-comment-id/{commentId}")
+	public List<HistoryItem> getAllByCommentId(@PathVariable(value = "commentId") Long commentId) {
 		logger.debug("Getting all history items by comment Id: " + commentId);
 		List<HistoryItem> resp = historyItemRepository.findAllByCommentId(commentId);
 		logger.info("found " + resp.size() + " history items for the commentId: " + commentId);
