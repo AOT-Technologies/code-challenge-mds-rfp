@@ -4,7 +4,7 @@ type ApplicationDataProps = {
   exitApplicationModal: () => void;
 };
 
-export const AddUserModal: React.FC<ApplicationDataProps> = ({
+export const ApplicationCommentModal: React.FC<ApplicationDataProps> = ({
   exitApplicationModal,
 }) => {
   const handleOnExit = () => {
