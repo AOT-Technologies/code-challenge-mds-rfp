@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,9 +34,12 @@ public class HistoryItemController {
 		return resp;
 	}
 
-	@GetMapping("/history-item/{id}")
-	public HistoryItem getHistoryItemById(@PathVariable(value = "id") Long historyItemId) {
-		return null;
+	@GetMapping("/history-item/by-comment-id/{commentId}")
+	public List<HistoryItem> getAllByCommentId(@PathVariable(value = "commentId") Long commentId) {
+		logger.debug("Getting all history items by comment Id: " + commentId);
+		List<HistoryItem> resp = historyItemRepository.findAllByCommentId(commentId);
+		logger.info("found " + resp.size() + " history items for the commentId: " + commentId);
+		return resp;
 	}
 
 	@PostMapping("/history-item")
@@ -53,10 +55,4 @@ public class HistoryItemController {
 
 	}
 
-	@PutMapping("/history-item/{id}")
-	public HistoryItem updateHistoryItem(@PathVariable(value = "id") Long historyItemId,
-			@Valid @RequestBody HistoryItem historyItem) {
-		return null;
-
-	}
 }
