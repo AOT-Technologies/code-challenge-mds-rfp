@@ -32,7 +32,7 @@ export const ApplicationDetail: React.FC = () => {
 
   useEffect(() => {
     listAllComments();
-  }, [comments]);
+  });
 
   useEffect(() => {
     initFilters();

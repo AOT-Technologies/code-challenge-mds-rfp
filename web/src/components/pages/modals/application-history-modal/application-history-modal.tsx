@@ -49,7 +49,7 @@ export const ApplicationHistoryModal: React.FC<ApplicationHistoryDataProps> = ({
 
   useEffect(() => {
     listAllHistoryItems();
-  }, [historyItems]);
+  });
 
   // call to service to get all history items
   const listAllHistoryItems = async () => {
